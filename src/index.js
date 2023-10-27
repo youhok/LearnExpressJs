@@ -1,8 +1,10 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const passport = require('passport');
-require('./strategy/local');
+// require('./strategy/local');
+require('./strategy/discord')
 //Router
 const authRoute = require('./routes/auth');
 const groceriesRoute = require('./routes/groceries');
@@ -13,21 +15,28 @@ const app = express();
 const PROT = 3001;
 
 
+
 //midleware
+
+app.use(express.urlencoded());
 app.use(cookieParser());
 app.use(express.json());
-app.use(session({
-    secret: 'ASDSDFADFADSFASFASDFASDFASDFASDFSDAFFSA',
-    resave: false,
-    saveUninitialized: false,
-}))
-app.use(express.urlencoded());
+app.use(
+    session({
+        secret: 'ASDSDFADFADSFASFASDFASDFASDFASDFSDAFFSA',
+        resave: false,
+        saveUninitialized: false,
+        store: MongoStore.create({
+            mongoUrl: 'mongodb://127.0.0.1:27017/learnExpressJs',
+        }),
+    })
+)
+
 
 app.use((req, res, next) => {
     console.log(`${req.method}:${req.url}`);
     next();
 });
-
 
 
 
