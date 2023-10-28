@@ -31,19 +31,16 @@ passport.use(
             scope: ['identify'],
         },
         async (accessToken, refreahToken, profile, done) => {
-            console.log(accessToken, refreahToken);
-            console.log(profile);
+            // console.log(accessToken, refreahToken);
+            // console.log(profile);
+            const { id: discordId } = profile;
             try {
-                const discordUser = await DiscordUser.findOne({
-                    discordId: profile.id,
-                });
+                const discordUser = await DiscordUser.findOne({ discordId });
                 if (discordUser) {
                     console.log(`Found User: ${discordUser}`);
                     return done(null, discordUser);
                 } else {
-                    const newUser = await DiscordUser.create({
-                        discordId: profile.id,
-                    });
+                    const newUser = await DiscordUser.create({ discordId });
                     console.log(`Create User ${newUser}`);
                     return done(null, newUser);
                 }
